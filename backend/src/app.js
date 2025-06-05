@@ -3,7 +3,7 @@ import cors from 'cors'
 import cookieParser from "cookie-parser";
 
 const app = express()
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173',process.env.CORS_ORIGIN];
+const allowedOrigins = ['http://localhost:3000','https://stream-sphere-4ban.vercel.app', 'http://localhost:5173',process.env.CORS_ORIGIN];
 
 app.use(cors({
   origin: (origin, callback) => {
