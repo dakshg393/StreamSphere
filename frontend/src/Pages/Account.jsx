@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Account = () => {
-    const { username } = useParams();
+    const { _id } = useParams();
     const [channelData, setChannelData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -12,7 +12,7 @@ const Account = () => {
         const fetchChannel = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_SERVER}users/c/${username}`,
+                    `${import.meta.env.VITE_SERVER}users/c/${_id}`,
                     { withCredentials: true }
                 );
 
@@ -27,7 +27,7 @@ const Account = () => {
         };
 
         fetchChannel();
-    }, [username]);
+    }, [_id]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p className="text-red-500">{error}</p>;

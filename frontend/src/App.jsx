@@ -30,7 +30,7 @@ function App() {
             <Route path="trending" element={<Trending />} />
             <Route path="video/:id" element={<Video />} />
             <Route path="subscriptions" element={<Subscriptions />} />
-            <Route path="account/:username" element={<Account />} />
+            <Route path="account/:_id" element={<Account />} />
             <Route path="library" element={<Library />} >
  
               {/* <Route index element={<LibraryMain/>}/> */}

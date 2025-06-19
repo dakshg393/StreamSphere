@@ -54,14 +54,14 @@ const navigate = useNavigate()
 
                 <div className="flex flex-1 ">
                     {/* Sidebar */}
-                    <aside className={`h-[100vh]  fixed  sm:relative overflow-y-auto pt-3 flex-col  gap-2 border-r-1 rounded-r-2xl bg-white 
-                  ${aside ? "w-64 flex" : "hidden md:flex  md:w-14"}`}>
+                    <aside className={`h-[100vh]      relative overflow-y-auto  pt-3 flex-col  gap-2 border-r-1 rounded-r-2xl bg-white 
+                  ${aside ? "w-64 flex  " : "hidden md:flex  md:w-14"}`}>
                        
                        {
                         navItems.map((navItem)=> <SideNavBtn path={navItem.path} icon={navItem.icon} name={navItem.name} isSmall={!aside} />)
                        }
                        
-                       <SideNavBtn path={`/account/${user.userName}`} icon={<UserCircle/>} name={"Account"} isSmall={!aside} custom={""}/>
+                       <SideNavBtn path={`/account/${user?._id}`} icon={<UserCircle/>} name={"Account"} isSmall={!aside} custom={""}/>
                        <span onClick={logoutUser}> <SideNavBtn onClick={logoutUser} icon={<LogOut />} name={"Logout"} isSmall={!aside} custom={"bottom-0 fixed"} /></span>
                     </aside>
 
