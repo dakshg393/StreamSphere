@@ -27,14 +27,6 @@ const genertaeAccesssAndRefreshToken = async (userid) => {
 
 const registerUser = asyncHandler(async (req, res) => {
 
-    //req.body 
-    //make validation like object us not empty
-    //check if user alredy exist  from username or email
-    //if file is exist or  nor check for image and avater//if then uplod to cloudanary
-    // create a user object --create entry in db
-    //remove password from refresh tokem field
-    //is check for user creation 
-    //if not then send error
 
     const { userName, email, fullName, password } = req.body
     console.log(email)
@@ -69,7 +61,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if (!avatar) {
         throw new apiError(400, "avatar file is required")
-
     }
 
     const user = await User.create({

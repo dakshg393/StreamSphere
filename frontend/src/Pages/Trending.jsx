@@ -31,7 +31,7 @@ const Trending = () => {
               
               {videos.length===0?(<h1>No Video found</h1>):(
                 videos.map((video,index)=>(
-                    <HorizontalCard key={index}  thumbnail={video.thumbnail} title={video.title} owner={video.owner} views={video.views} createdAt={video.createdAt}/>
+                    <HorizontalCard key={video._id} id={video._id}  thumbnail={video.thumbnail} title={video.title} owner={video.owner} views={video.views} createdAt={video.createdAt}/>
                 ))
               )}
             </div>

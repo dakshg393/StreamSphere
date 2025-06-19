@@ -1,30 +1,58 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SignupPage = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    name: '',
+    userName: '',
+    fullName: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    avatar: null,
   });
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      avatar: e.target.files[0],
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
+    try {
+      const form = new FormData();
+      form.append('userName', formData.userName);
+      form.append('fullName', formData.fullName);
+      form.append('email', formData.email);
+      form.append('password', formData.password);
+      if (formData.avatar) {
+        form.append('avatar', formData.avatar);
+      }
 
-    // Add signup logic here (API call, validation, etc.)
-    console.log('Signing up with:', formData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER}users/register`,
+        form,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        }
+      );
+
+      alert('Signup successful:', response.data.data.user);
+      navigate("/login")
+    } catch (error) {
+      alert('Signup failed:', error.response?.data || error.message);
+    }
   };
 
   return (
@@ -33,53 +61,80 @@ const SignupPage = () => {
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Create an Account</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label htmlFor="userName" className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
             <input
               type="text"
-              name="name"
-              id="name"
+              name="userName"
+              id="userName"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={formData.name}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              value={formData.userName}
               onChange={handleChange}
             />
           </div>
+
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="fullName"
+              id="fullName"
+              required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              value={formData.fullName}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               type="email"
               name="email"
               id="email"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2"
               value={formData.email}
               onChange={handleChange}
             />
           </div>
+
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <input
               type="password"
               name="password"
               id="password"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2"
               value={formData.password}
               onChange={handleChange}
             />
           </div>
+
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <label htmlFor="avatar" className="block text-sm font-medium text-gray-700 mb-1">
+              Avatar
+            </label>
             <input
-              type="password"
-              name="confirmPassword"
-              id="confirmPassword"
+              type="file"
+              name="avatar"
+              id="avatar"
+              accept="image/*"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={formData.confirmPassword}
-              onChange={handleChange}
+              onChange={handleFileChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2"
             />
           </div>
+
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
@@ -88,7 +143,10 @@ const SignupPage = () => {
           </button>
         </form>
         <p className="text-sm text-gray-500 text-center mt-4">
-          Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
+          Already have an account?{' '}
+          <a href="/login" className="text-blue-600 hover:underline">
+            Login
+          </a>
         </p>
       </div>
     </div>

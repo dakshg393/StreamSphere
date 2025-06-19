@@ -23,12 +23,12 @@ const LoginPage = () => {
         { withCredentials: true } 
       );
 
-      console.log('Login successful',response.data.data.user);
+      alert('Login successful',response.data.data.user);
       
       setUser(response.data.data.user)
       navigate("/")
     } catch (error) {
-      console.error('Login failed:', error.response?.data || error.message);
+      alert('Login failed:', error.response?.data || error.message);
     }
   };
 

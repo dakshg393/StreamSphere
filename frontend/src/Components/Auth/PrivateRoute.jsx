@@ -4,6 +4,7 @@ import useUserStore from '../../Store/user.Store';
 
 const PrivateRoute = () => {
   const user = useUserStore(state => state.user);
+  
 
   // Only allow access if user exists
   if (!user) {
@@ -14,3 +15,5 @@ const PrivateRoute = () => {
 };
 
 export default PrivateRoute;
+
+

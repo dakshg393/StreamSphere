@@ -12,15 +12,14 @@ const MainLayout = () => {
 const navigate = useNavigate()
     const aside =useNavStore((state)=>state.aside)
     const logout = useUserStore((state)=>state.logout)
-
+    const user =useUserStore((state)=>state.user)
     const [isOpen, setIsOpen] = useState(true)
 
     const path = import.meta.env.VITE_SERVER
  const logoutUser = async () => {
-    
     console.log("clicked logout")
   try {
-    
+     logout(); 
     // Ensure path is correct
     const response = await axios.post(`${path}users/logout`, {},{ 
       withCredentials: true, // Sends cookies with the request if needed (like session cookie)
@@ -28,7 +27,7 @@ const navigate = useNavigate()
     console.log(response.data); // Check the response from the server
 
     // Perform logout action
-    logout(); // Call your store's logout method to clear user data from the state
+   // Call your store's logout method to clear user data from the state
     navigate("/login"); // Navigate to the login page after successful logout
   } catch (error) {
     console.error("Error during logout:", error);
@@ -62,7 +61,7 @@ const navigate = useNavigate()
                         navItems.map((navItem)=> <SideNavBtn path={navItem.path} icon={navItem.icon} name={navItem.name} isSmall={!aside} />)
                        }
                        
-                       <SideNavBtn path={"/acount"} icon={<UserCircle/>} name={"Account"} isSmall={!aside} custom={""}/>
+                       <SideNavBtn path={`/account/${user.userName}`} icon={<UserCircle/>} name={"Account"} isSmall={!aside} custom={""}/>
                        <span onClick={logoutUser}> <SideNavBtn onClick={logoutUser} icon={<LogOut />} name={"Logout"} isSmall={!aside} custom={"bottom-0 fixed"} /></span>
                     </aside>
 
