@@ -1,4 +1,4 @@
-// Store/user.Store.js
+// // Store/user.Store.js
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -10,8 +10,8 @@ const useUserStore = create(
       logout: () => set({ user: null }),
     }),
     {
-      name: 'user-storage', // name in localStorage
-      getStorage: () => localStorage,
+      name: 'user-session-storage',
+      getStorage: () => sessionStorage, // 👈 switch here
     }
   )
 );
