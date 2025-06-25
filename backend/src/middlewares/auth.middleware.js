@@ -17,25 +17,25 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
         const user = await User.findById(decodedToken?._id).select('-password -refreshToken')
 
         if (!user) {
-            return res
-              .status(401)
-              .clearCookie("accessToken", { httpOnly: true, secure: true, sameSite: "strict" })
-              .clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "strict" })
-              .json({ success: false, message: "Unauthorized: Invalid user" });
-            // throw new apiError(401, "Invalid Access Token")
+            // return res
+            //   .status(401)
+            //   .clearCookie("accessToken", { httpOnly: true, secure: true, sameSite: "strict" })
+            //   .clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "strict" })
+            //   .json({ success: false, message: "Unauthorized: Invalid user" });
+            throw new apiError(401, "Invalid Access Token")
         }
 
         req.user = user;
         next()
 
     } catch (error) {
-         return res
-              .status(401)
-              .clearCookie("accessToken", { httpOnly: true, secure: true, sameSite: "strict" })
-              .clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "strict" })
-              .json({ success: false, message: "Unauthorized: Invalid user" });
+        //  return res
+        //       .status(401)
+        //       .clearCookie("accessToken", { httpOnly: true, secure: true, sameSite: "strict" })
+        //       .clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "strict" })
+        //       .json({ success: false, message: "Unauthorized: Invalid user" });
 
-        // throw new apiError(401,  "Invalid Access Token")
+         throw new apiError(401,  "Invalid Access Token")
     }
 
 })

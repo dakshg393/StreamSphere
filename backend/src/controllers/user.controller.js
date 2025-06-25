@@ -89,9 +89,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
 
-    // // const clientIp = requestIp.getClientIp(req);
-    // console.log("Client IP:", clientIp);
-   
 
     const { email, password } = req.body
     
@@ -120,7 +117,8 @@ const loginUser = asyncHandler(async (req, res) => {
     const option = {
         httpOnly: true,
         secure: true,
-        sameSite:"None"
+        sameSite:"None",
+        maxAge:15*60*100
     }
 
     return res
@@ -130,7 +128,7 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(
             new apiResponse(
                 200, {
-                user: loggedInUser, accessToken, refreshToken
+                user: loggedInUser,
 
             },
                 "User logged In Successfully"
