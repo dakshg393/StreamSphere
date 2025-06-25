@@ -72,6 +72,11 @@ const LoginPage = () => {
         <p className="text-sm text-gray-500 text-center mt-4">
           Not have an account? <a href="/signup" className="text-blue-600 hover:underline">Signup</a>
         </p>
+        <p className='text-red-600'> This project uses a free-tier cloud backend service (like Render or Railway).  
+    On the first API call, the server may take <strong>5–15 seconds</strong> to wake up.  
+    During this time, you may see a short delay or a timeout error.  
+    Please wait a few seconds and try again — the server will respond once it's active.</p>
+
       </div>
     </div>
   );
