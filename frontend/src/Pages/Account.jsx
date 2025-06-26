@@ -58,9 +58,9 @@ const Account = () => {
 
             <div className='  mt-5 w-full'>
                 <div>
-                    <div className='flex items-center justify-center w-full bg-blue-400 h-10'>
-                        <span className='w-1/2 text-center border-1'> Video </span>
-                        <span className='w-1/2 text-center border-1'>Twwets</span>
+                    <div className='flex items-center justify-center w-full bg-blue-400 h-10 border-1'>
+                        <span className='w-1/2 text-center '> Video </span>
+                        <span className='w-1/2 text-center '>Twwets</span>
                     </div>
                     {channelData?.videos?.length > 0 ? (
                         <div className="flex flex-wrap gap-4 items-center justify-center">
