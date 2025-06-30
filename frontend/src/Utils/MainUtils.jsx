@@ -65,11 +65,6 @@ const libraryItems=[
         path:"/library/playlist",
         icon:<BookMarked/>
     },
-    // {
-    //     name:"Liked Video",
-    //     path:"/library/likedvideo",
-    //     icon:<ThumbsUp/>
-    // },
     {
         name:"Watch History",
         path:"/library/history",

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import VerticalCard from '../Components/Card/VerticalCard';
+import { unsubscribeFromChannel } from '../api/subscription';
 
 const Account = () => {
     const { _id } = useParams();
@@ -34,58 +35,50 @@ const Account = () => {
     if (error) return <p className="text-red-500">{error}</p>;
     if (!channelData) return <p>No data found.</p>;
 
+    const subscribeHandler=async()=>{
+        if(channelData.isSubscribedTo){
+            try {
+                const res = unsubscribeFromChannel(_id)
+                channelData.isSubscribedTo = false
+                
+            } catch (error) {
+                
+            }
+            
+            
+        }else{
+            const res = await unsubscribeFromChannel()
+        }
+    }
+
     return (
-        <section className="w-full h-screen   flex flex-wrap  md:p-5 p-2  mb-2 bg-white    overflow-y-auto">
-
-            <div className=' w-full h-96 drop-shadow-2xl rounded-2xl border-1 p-2'>
-                <div className=' w-full h-40 '>
-                    <img src={channelData?.coverImage} className='w-full h-full' />
-                </div>
-                <div className=' h-40 px-5 flex justify-start '>
-                    <img src={channelData?.avatar} alt='Profile Image' className='h-full aspect-square transform -translate-y-[40%] rounded-full ' />
-                    <div className='p-4'>
-                        <h1>{channelData?.fullName}</h1>
-                        <h2>@{channelData?.userName}</h2>
-                        <h3>Subscriber {channelData?.subscribersCount} </h3>
-                        <button className='bg-purple-500 p-2 mt-2 rounded-2xl'>Subscribe</button>
+  
+        <section className="w-full h-full flex flex-col">
+            {/* Heading */}
+            <div className=" w-full  shadow flex items-center rounded-2xl border-1 px-4">
+                <div className=' w-full h-90 drop-shadow-2xl  p-2'>
+                    <div className=' w-full h-40 '>
+                        <img src={channelData?.coverImage} className='w-full h-full' />
                     </div>
-                </div>
+                    <div className=' h-40 px-5 flex justify-start '>
+                        <img src={channelData?.avatar} alt='Profile Image' className='h-full aspect-square transform -translate-y-[40%] rounded-full ' />
+                        <div className='p-4'>
+                            <h1>{channelData?.fullName}</h1>
+                            <h2>@{channelData?.userName}</h2>
+                            <h3>Subscriber {channelData?.subscribersCount} </h3>
+                            <button onClick={()=>subscribeHandler()} className={`${channelData.isSubscribedTo && "bg-purple-500"} border-1 p-2 mt-2 rounded-2xl`}>Subscribe</button>
+                        </div>
+                    </div>
 
+                </div>
+            </div>
+
+            {/* Scrollable Video List */}
+            <div className="flex-1 overflow-y-auto px-4 py-6 flex flex-col items-center gap-4">
 
 
 
             </div>
-
-            <div className='  mt-5 w-full'>
-                <div>
-                    <div className='flex items-center justify-center w-full bg-blue-400 h-10 border-1'>
-                        <span className='w-1/2 text-center '> Video </span>
-                        <span className='w-1/2 text-center '>Twwets</span>
-                    </div>
-                    {channelData?.videos?.length > 0 ? (
-                        <div className="flex flex-wrap gap-4 items-center justify-center">
-                            {channelData.videos.map((video) => (
-                                <VerticalCard
-                                    key={video._id}
-                                    thumbnail={video.thumbnail}
-                                    title={video.title}
-                                    owner={video.owner}
-                                    views={video.views}
-                                    createdAt={video.createdAt}
-                                    id={video._id}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center text-gray-500 py-10">
-                            <p className="text-lg font-medium">No videos uploaded yet.</p>
-                            <p className="text-sm">Please check back later or explore other content.</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-
         </section>
     );
 };

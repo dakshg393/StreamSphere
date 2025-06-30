@@ -1,3 +1,23 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+const useUserStore = create(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      logout: () => set({ user: null }),
+    }),
+    {
+      name: 'user-storage', // key name in localStorage
+      partialize: (state) => ({ user: state.user }), // only persist 'user'
+    }
+  )
+);
+
+export default useUserStore;
+
+
 
 // import { create } from 'zustand';
 // import { persist } from 'zustand/middleware';
@@ -23,12 +43,12 @@
 // export default useUserStore;
 
 // src/store/useUserStore.js
-import { create } from 'zustand';
+// import { create } from 'zustand';
 
-const useUserStore = create((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  logout: () => set({ user: null }),
-}));
+// const useUserStore = create((set) => ({
+//   user: null,
+//   setUser: (user) => set({ user }),
+//   logout: () => set({ user: null }),
+// }));
 
-export default useUserStore;
+// export default useUserStore;

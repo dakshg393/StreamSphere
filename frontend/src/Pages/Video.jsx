@@ -79,7 +79,7 @@ const Video = () => {
         <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
           <span>
             {videoData.views.toLocaleString()} views •{" "}
-            {new Date(videoData.createdAt).toLocaleDateString()}
+            {new Date(videoData.createdAt).toLocaleDateString("en-IN")}
           </span>
 
           <button

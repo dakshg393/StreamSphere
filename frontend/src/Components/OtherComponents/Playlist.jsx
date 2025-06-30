@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import VerticalCard from "../Card/VerticalCard";
 import PlaylistCard from "../Card/PlaylistCard";
+import { getAllPlaylist } from "../../api/playlist";
 
 const Playlist=()=>{
     const [playlist,setPlaylist] = useState([])
@@ -9,11 +10,12 @@ const Playlist=()=>{
     useEffect(()=>{
 
         const fetchPlaylist = async () => {
-                const response = await axios.get(`${import.meta.env.VITE_SERVER}playlist/getAllPlaylist`, {
-          withCredentials: true,
-        });
-        console.log(response.data.data);
-        setPlaylist(response.data.data)
+            const res = await getAllPlaylist()
+        //         const response = await axios.get(`${import.meta.env.VITE_SERVER}playlist/getAllPlaylist`, {
+        //   withCredentials: true,
+        // });
+        console.log(res.data.data);
+        setPlaylist(res.data.data)
         
         }
 
