@@ -40,7 +40,7 @@ const userSchema= new Schema({
         },
         watchedAt:{
             type:Date,
-            default:Date.now()
+            default:Date.now
         }
     }],
     password:{

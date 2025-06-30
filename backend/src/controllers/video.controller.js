@@ -453,6 +453,35 @@ const getTrandingVideos = asyncHandler(async (req, res) => {
 
 
 
+const addToWatchHistory = asyncHandler(async (req, res) => {
+  const { videoId } = req.body;
+
+  if (!videoId) {
+    return res.status(400).json(new apiResponse(null, "Video ID is required", false));
+  }
+
+  const objectId = new mongoose.Types.ObjectId(videoId);
+
+  // Remove old entry if exists
+  await User.updateOne(
+    { _id: req.user._id },
+    { $pull: { watchHistory: { videoId: objectId } } }
+  );
+
+  // Push new entry at the top
+  await User.findByIdAndUpdate(req.user._id, {
+    $push: {
+      watchHistory: {
+        $each: [{ videoId: objectId }],
+        $position: 0
+      }
+    }
+  });
+
+  return res.status(200).json(new apiResponse(null, "Added to watch history"));
+});
+
+
 export {
     createVideo,
     getVideo,
@@ -460,5 +489,6 @@ export {
     deleteVideo,
     recommendedVideos,
     getVideoByCategory,
-    getTrandingVideos
+    getTrandingVideos,
+    addToWatchHistory
 }

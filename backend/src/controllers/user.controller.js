@@ -410,61 +410,63 @@ const getUserChannelProfile = asyncHandler(async (req,res)=>{
 })
 
 
-const getWatchHistory = asyncHandler(async (req,res)=>{
-    const user = await User.aggregate([
-        {
-            $match :{
-                _id : new mongoose.Types.ObjectId(req.user._id)
 
+const getWatchHistory = asyncHandler(async (req, res) => {
+  const result = await User.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(req.user._id) }
+    },
+    {
+      $unwind: "$watchHistory"
+    },
+    {
+      $sort: { "watchHistory.watchedAt": -1 }
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory.videoId",
+        foreignField: "_id",
+        as: "video"
+      }
+    },
+    { $unwind: "$video" },
+    {
+      $lookup: {
+        from: "users",
+        localField: "video.owner",
+        foreignField: "_id",
+        as: "video.owner",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              username: 1,
+              avatar: 1
             }
-        },
-        {
-            $lookup:{
-                from:"videos",
-                localField:"watchHistory",
-                foreignField:"_id",
-                as:"watchHistory",
-                pipeline:[
-                    {
-                        $lookup:{
-                            from:"users",
-                            localField:"owner",
-                            foreignField:"_id",
-                            as:"owner",
-                            pipeline:[
-                                {
-                                    $project:{
-                                        fullName:1,
-                                        username:1,
-                                        avatar:1
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $addFields:{
-                            owner:{
-                                $first:"$owner"
-                            }
-
-                        }
-                    }
-                ]
-            }
+          }
+        ]
+      }
+    },
+    {
+      $addFields: {
+        video: {
+          $mergeObjects: [
+            "$video",
+            { owner: { $first: "$video.owner" } },
+            { watchedAt: "$watchHistory.watchedAt" }
+          ]
         }
-    ])
+      }
+    },
+    {
+      $replaceRoot: { newRoot: "$video" }
+    }
+  ]);
 
-    return res
-    .status(200)
-    .json(
-        new apiResponse(
-            user[0].watchHistory,
-            "watch History fatched successfully"
-        )
-    )
+  return res.json(new apiResponse(200,result, "Watch history fetched successfully"));
+});
 
-})
 
 
 export {

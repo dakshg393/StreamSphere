@@ -1,40 +1,48 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import HorizontalCard from "../Card/HorizontalCard";
-import VerticalCard from "../Card/VerticalCard";
-import axios from "axios";
-import { useState } from "react";
+import { getWatchHistory } from "../../api/user";
 
 const WatchHistory = () => {
-    const [history,setHistory] =useState()
-    useEffect(()=>{
-        const fetchHistory= async()=>{
-                const response = await axios.get(`${import.meta.env.VITE_SERVER}users/history`, {
-          withCredentials: true,
-        });
-        console.log(response.data);
-        setHistory(response.data)
-        }
+  const [history, setHistory] = useState([]);
 
-        fetchHistory();
-     
-    },[])
-    return (
-        <div className="w-full flex-1 overflow-y-auto flex flex-col items-center">
-        <div className="w-full flex-1 overflow-y-auto flex flex-col items-center">
-            <h1 className="text-xl font-semibold w-full text-start p-6">History</h1>
-            <div className="w-full gap-4 flex flex-wrap justify-center items-center">
-                {history!==null ? <h1>No watch history Found</h1> :
-                    history.map((video)=>(
-                        <HorizontalCard title={video.title} thumbnail={video.thumbnail} />
-                    ))
-                }
-               
-            </div>
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await getWatchHistory();
+        console.log(response.data.data);
+        setHistory(response.data.data || []);
+      } catch (error) {
+        console.error("Failed to fetch watch history", error);
+      }
+    };
 
-           
+    fetchHistory();
+  }, []);
+
+  return (
+    <div className="w-full flex-1 overflow-y-auto flex flex-col items-center">
+      <div className="w-full flex-1 overflow-y-auto flex flex-col items-center">
+      
+        <div className="w-full gap-4 flex flex-wrap justify-center items-center">
+          {history.length === 0 ? (
+            <h1>No watch history found</h1>
+          ) : (
+            history.map((video) => (
+               <HorizontalCard
+              key={video._id}
+              id={video._id}
+              thumbnail={video.thumbnail}
+              title={video.title}
+              owner={video.owner}
+              views={video.views}
+              createdAt={video.createdAt}
+            />
+            ))
+          )}
         </div>
-        </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
-export default WatchHistory
+export default WatchHistory;

@@ -31,3 +31,8 @@ export const getTrendingVideos = (page = 1) =>
   axiosInstance.get("/video/getTrandingVideos", {
     params: { page },
   });
+
+export const addToWatchHistory  = (videoId) =>
+  axiosInstance.post("/video/addToWatchHistory", {
+    videoId:videoId
+});

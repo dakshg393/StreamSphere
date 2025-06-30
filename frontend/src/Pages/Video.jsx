@@ -2,12 +2,15 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ThumbsUp } from "lucide-react";
+import { addToWatchHistory } from "../api/video";
 
 const Video = () => {
   const { id } = useParams();
   const [videoData, setVideoData] = useState(null);
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+
+
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -16,8 +19,11 @@ const Video = () => {
           `${import.meta.env.VITE_SERVER}video/getVideo/${id}`,
           { withCredentials: true }
         );
+        
         setVideoData(response.data.data);
         setLikes(response.data.data.likes || 0); // default to 0 if undefined
+        await addToWatchHistory(response.data.data._id)
+        
       } catch (error) {
         console.error("Failed to load video", error);
       }
@@ -25,6 +31,8 @@ const Video = () => {
 
     fetchVideo();
   }, [id]);
+
+
 
   const extractYouTubeId = (url) => {
     try {
