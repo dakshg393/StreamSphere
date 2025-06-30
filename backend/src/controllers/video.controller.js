@@ -393,36 +393,7 @@ const getVideoByCategory = asyncHandler(async (req, res) => {
 })
 
 
-// const getTrandingVideos = asyncHandler(async (req, res) => {
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 12;
-//     const skip = (page - 1) * limit;
 
-//     const trendingVideos = await Video.aggregate([
-//         {
-//             $match: {
-//                 isPublished: true
-//             }
-//         },
-//         {
-//             $sort: { views: -1 }
-//         },
-//         {
-//             $limit: limit
-//         }
-//     ]).skip(skip)   // Skip videos based on the page number
-//         .limit(limit) // Limit the number of videos returned
-//         .exec();
-
-//     if (!trendingVideos) {
-//         throw new apiError(401, "Trending videos not Found")
-//     }
-
-//     res
-//         .status(200)
-//         .json(new apiResponse(200, trendingVideos, "Trending videos featched Successfully"))
-
-// })
 const getTrandingVideos = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 12;
@@ -478,6 +449,8 @@ const getTrandingVideos = asyncHandler(async (req, res) => {
     .status(200)
     .json(new apiResponse(200, trendingVideos, "Trending videos fetched successfully"));
 });
+
+
 
 
 export {

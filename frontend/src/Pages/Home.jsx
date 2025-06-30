@@ -52,7 +52,7 @@ const Home = () => {
     <section className="h-screen bg-white flex flex-col justify-center items-center">
       <div className="h-16 w-full gap-x-4 pl-10 font-bold flex justify-start items-center overflow-x-auto flex-wrap">
         {categoryItems.map((item) => (
-          <button onClick={() => setCategory(item.name)} key={item.name} className="whitespace-nowrap">
+          <button onClick={() => setCategory(item.name)} key={item.name} className={`${item.name == category ? "bg-primary-color":""} hover:cursor-pointer hover:bg-secondary-color whitespace-nowrap rounded-2xl p-1`}>
             {item.name}
           </button>
         ))}

@@ -6,7 +6,22 @@ import { apiResponse } from '../utils/apiResponse.js'
 import jwt from 'jsonwebtoken'
 import mongoose from "mongoose";
 
-import requestIp from 'request-ip';
+import ms from "ms"
+
+ const accessTokenOptions = {
+            httpOnly:true,
+            secure:true,
+            sameSite:"None",
+            maxAge:ms(process.env.ACCESS_TOKEN_EXPIRY)
+
+        }
+ const refreshTokenOptions = {
+            httpOnly:true,
+            secure:true,
+            sameSite:"None",
+            maxAge:ms(process.env.REFRESH_TOKEN_EXPIRY)
+
+}
 
 const genertaeAccesssAndRefreshToken = async (userid) => {
     try {
@@ -114,17 +129,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
-    const option = {
-        httpOnly: true,
-        secure: true,
-        sameSite:"None",
-        maxAge:15*60*100
-    }
+   
 
     return res
         .status(200)
-        .cookie("accessToken", accessToken, option)
-        .cookie("refreshToken", refreshToken, option)
+        .cookie("accessToken", accessToken, accessTokenOptions)
+        .cookie("refreshToken", refreshToken, refreshTokenOptions)
         .json(
             new apiResponse(
                 200, {
@@ -152,16 +162,12 @@ const logoutUser =  asyncHandler(async(req,res) => {
         }
     )
 
-    const option = {
-        httpOnly: true,
-        secure: true,
-        sameSite:"None"
-    }
+
 
     return res
     .status(200)
-    .clearCookie("accessToken",option)
-    .clearCookie("refreshToken",option)
+    .clearCookie("accessToken",accessTokenOptions)
+    .clearCookie("refreshToken",refreshTokenOptions)
     .json(new apiResponse(200,{},"User logout Successfuly"))
 
 })
@@ -187,17 +193,13 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
             throw new apiError(401,"Refresh Token Expired or Used")
         }
     
-        const options = {
-            httpOnly:true,
-            secure:true,
-            sameSite:"None"
-        }
+    
     
         const {accessToken,newRefreshToken} =await genertaeAccesssAndRefreshToken(user._id)
         return res
         .status(200)
-        .cookie("accessToken", accessToken,options)
-        .cookie("refreshToken",newRefreshToken,options)
+        .cookie("accessToken", accessToken,accessTokenOptions)
+        .cookie("refreshToken",newRefreshToken,refreshTokenOptions)
         .json(
             new apiResponse(200,{accessToken,newRefreshToken},"Access Token Refreshed Successfuly")
         )
@@ -226,6 +228,7 @@ const changeCurrentUserPassword = asyncHandler(async (req,res)=>{
     .status(200)
     .json(new apiResponse(200,{},"Password Change Successfuly"))
 })
+
 
 const getCurrentUser = asyncHandler(async (req,res)=>{
 
