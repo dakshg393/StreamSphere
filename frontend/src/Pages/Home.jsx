@@ -66,7 +66,7 @@ const Home = () => {
 
         ) : (
           videos.map((video, index) => (
-            <VerticalCard key={video._id}  thumbnail = {video.thumbnail}  title = {video.title}  owner = {video.owner} views = {video.views} createdAt = {video.createdAt} id = {video._id}  />
+            <VerticalCard key={video._id}  thumbnail = {video.thumbnail}  title = {video.title}  owner = {video.owner} views={video.views} createdAt = {video.createdAt} id = {video._id}  />
           ))
         )}
 

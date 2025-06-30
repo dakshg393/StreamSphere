@@ -2,6 +2,7 @@ import React from "react";
 import vite from "../../../public/vite.svg"
 import ProfileImg from "../Ui/ProfileImg";
 import { Link } from "react-router-dom";
+import { formatRelativeTime } from "../../Utils/otherUtils";
 const HorizontalCard = ({  thumbnail = "", title = "", owner = "", views = "", createdAt = "", isPlaylist = false, id }) => {
 
 
@@ -21,7 +22,7 @@ const HorizontalCard = ({  thumbnail = "", title = "", owner = "", views = "", c
                             <h1 className="text-lg  font-semibold h-1/2 line-clamp-2 overflow-hidden">{title}</h1>
                             <h2 className="text-sm text-gray-700 h-[34%] flex items-center justify-left gap-x-2 "><ProfileImg size={"h-8 w-8"} image={owner.avatar} /> {owner.userName}</h2>
                             <h2 className="text-xs text-gray-500 h-[14%]">
-                                {views} views <span className="ml-2"><br />{createdAt}</span>
+                                {views} views <span className="ml-2"><br />{formatRelativeTime(createdAt)}</span>
                             </h2>
                         </>
                     )}

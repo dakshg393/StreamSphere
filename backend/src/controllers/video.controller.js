@@ -361,36 +361,96 @@ const recommendedVideos = asyncHandler(async (req, res) => {
     return res.status(200).json(new apiResponse(200, videos, "Video fetched successfully"));
 });
 
-const getVideoByCategory = asyncHandler(async (req, res) => {
+// const getVideoByCategory = asyncHandler(async (req, res) => {
 
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 12;
+//     const skip = (page - 1) * limit;
+
+
+//     const  category  = req.params.category
+//     if (!category) {
+//         throw new apiError(400, "Category not found")
+//     }
+
+//     const videos = await Video.find(
+//         { category: category, isPublished: true }
+//     )
+//         .skip(skip)   // Skip videos based on the page number
+//         .limit(limit) // Limit the number of videos returned
+//         .exec(); // for imediet execute of query
+
+
+
+//     if (!videos) {
+//         throw new apiError(400, "Video not found")
+//     }
+
+//     res
+//         .status(200)
+//         .json(new apiResponse(200, videos, `${category} Videos fatched successfully`))
+
+// })
+const getVideoByCategory = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
     const skip = (page - 1) * limit;
 
-
-    const  category  = req.params.category
+    const category = req.params.category;
     if (!category) {
-        throw new apiError(400, "Category not found")
+        throw new apiError(400, "Category not found");
     }
 
-    const videos = await Video.find(
-        { category: category, isPublished: true }
-    )
-        .skip(skip)   // Skip videos based on the page number
-        .limit(limit) // Limit the number of videos returned
-        .exec(); // for imediet execute of query
+    const videos = await Video.aggregate([
+        {
+            $match: {
+                category: category,
+                isPublished: true
+            }
+        },
+        {
+            $lookup: {
+                from: "users", // should match your MongoDB collection name
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerDetails"
+            }
+        },
+        {
+            $unwind: {
+                path: "$ownerDetails",
+                preserveNullAndEmptyArrays: true // just in case owner doesn't exist
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                title: 1,
+                description: 1,
+                category: 1,
+                videoUrl: 1,
+                thumbnail: 1,
+                createdAt: 1,
+                views:1,
+                owner: {
+                    _id: "$ownerDetails._id",
+                    userName: "$ownerDetails.userName",
+                    avatar: "$ownerDetails.avatar"
+                }
+            }
+        },
+        { $skip: skip },
+        { $limit: limit }
+    ]);
 
-
-
-    if (!videos) {
-        throw new apiError(400, "Video not found")
+    if (!videos || videos.length === 0) {
+        throw new apiError(400, "Video not found");
     }
 
-    res
-        .status(200)
-        .json(new apiResponse(200, videos, `${category} Videos fatched successfully`))
-
-})
+    res.status(200).json(
+        new apiResponse(200, videos, `${category} Videos fetched successfully`)
+    );
+});
 
 
 
