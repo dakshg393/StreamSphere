@@ -1,13 +1,13 @@
 import React from "react";
 import vite from "../../../public/vite.svg"
 
-const ProfileImg = ({size , image={vite}  })=>{
+const ProfileImg = ({size ,onClick, image={vite}  })=>{
 
    
 
     return(
-        <div className={`${size} bg-green-400 rounded-full  overflow-hidden flex-none flex-nowrap shrink-0`}>
-            <img src={image} alt="imagae" className="object-contain h-full w-full"></img>
+        <div  onClick={onClick} className={`${size}  rounded-full  overflow-hidden flex-none flex-nowrap shrink-0`}>
+            <img src={image} alt="profile" className="object-cover h-full w-full" />
         </div>
     )
 }

@@ -36,3 +36,6 @@ export const addToWatchHistory  = (videoId) =>
   axiosInstance.post("/video/addToWatchHistory", {
     videoId:videoId
 });
+
+export const getUserVideos  = (userId,page=0) =>
+  axiosInstance.get(`/video/getUserVideos/${userId}`);

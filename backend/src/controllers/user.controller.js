@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiError } from '../utils/apiError.js'
 import { User } from '../models/user.model.js'
+import {Subscription} from '../models/subscription.model.js'
 import { uploadOnCloudinary } from '../utils/cloudinary.js'
 import { apiResponse } from '../utils/apiResponse.js'
 import jwt from 'jsonwebtoken'
@@ -409,6 +410,47 @@ const getUserChannelProfile = asyncHandler(async (req,res)=>{
     )
 })
 
+const getSubscribedToList = asyncHandler(async (req, res) => {
+    const _id = req.user._id;
+
+    if (!_id) {
+        throw new apiError(400, "User ID is missing");
+    }
+
+    const subscribedChannels = await Subscription.aggregate([
+        {
+            $match: {
+                subscriber: new mongoose.Types.ObjectId(_id)
+            }
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'channel',
+                foreignField: '_id',
+                as: 'channelDetails'
+            }
+        },
+        {
+            $unwind: '$channelDetails'
+        },
+        {
+            $replaceRoot: { newRoot: '$channelDetails' }
+        },
+        {
+            $project: {
+                _id: 1,
+                userName: 1,
+                avatar: 1
+            }
+        }
+    ]);
+
+    return res.status(200).json(
+        new apiResponse(200, subscribedChannels, "Subscribed channels fetched successfully")
+    );
+});
+
 
 
 const getWatchHistory = asyncHandler(async (req, res) => {
@@ -480,6 +522,7 @@ export {
     updateUserAvatar,
     updateUserCoverImage,
     getUserChannelProfile,
+    getSubscribedToList,
     getWatchHistory
 }
 

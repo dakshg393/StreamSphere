@@ -511,6 +511,63 @@ const getTrandingVideos = asyncHandler(async (req, res) => {
 });
 
 
+const getUserVideos = asyncHandler(async (req, res) => {
+  const userId = req.params._id;
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  if (!userId) {
+    throw new apiError(400, "User ID is required");
+  }
+
+  const videos = await Video.aggregate([
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(userId),
+      },
+    },
+    {
+      $sort: { createdAt: -1 },
+    },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit,
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "ownerDetails",
+      },
+    },
+    {
+      $unwind: "$ownerDetails",
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        description: 1,
+        thumbnail: 1,
+        createdAt: 1,
+        views: 1,
+        owner: {
+          _id: "$ownerDetails._id",
+          userName: "$ownerDetails.userName",
+          avatar: "$ownerDetails.avatar",
+        },
+      },
+    },
+  ]);
+
+  res
+    .status(200)
+    .json(new apiResponse(200, videos, "User videos fetched successfully"));
+});
 
 
 const addToWatchHistory = asyncHandler(async (req, res) => {
@@ -550,5 +607,6 @@ export {
     recommendedVideos,
     getVideoByCategory,
     getTrandingVideos,
+    getUserVideos,
     addToWatchHistory
 }

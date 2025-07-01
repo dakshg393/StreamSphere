@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createVideo,getVideo ,updateVideo,deleteVideo,recommendedVideos,getVideoByCategory,getTrandingVideos,addToWatchHistory} from "../controllers/video.controller.js";
+import { createVideo,getVideo ,updateVideo,deleteVideo,recommendedVideos,getVideoByCategory,getTrandingVideos,addToWatchHistory,getUserVideos} from "../controllers/video.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 const router = Router()
@@ -21,6 +21,8 @@ router.route("/delete/:videoId").delete(verifyJWT,deleteVideo)
 router.route("/recommendedVideos").get(verifyJWT,recommendedVideos)
 router.route("/getVideoByCategory/:category").get(verifyJWT,getVideoByCategory)
 router.route("/getTrandingVideos").get(verifyJWT,getTrandingVideos)
+router.route("/getUserVideos/:_id").get(verifyJWT,getUserVideos)
 router.route("/addToWatchHistory").post(verifyJWT,addToWatchHistory)
+
 
 export default router

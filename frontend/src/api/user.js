@@ -54,6 +54,10 @@ export const updateUserCoverImage = (coverFile) => {
 export const getUserChannelProfile = (_id) =>
   axiosInstance.get(`/users/c/${_id}`);
 
-// 11. Get Watch History
+// 11:Get Subscriber List
+export const getSubscribedToList = () =>
+  axiosInstance.get(`/users/getSubscribedToList`);
+
+// 12. Get Watch History
 export const getWatchHistory = () =>
   axiosInstance.get("/users/history");

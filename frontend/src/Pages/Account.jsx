@@ -6,20 +6,28 @@ import {
   unsubscribeFromChannel,
 } from "../api/subscription.js";
 import { getUserChannelProfile } from "../api/user.js";
+import { getUserVideos } from "../api/video.js";
 
 const Account = () => {
   const { _id } = useParams();
-  const [channelData, setChannelData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [subscribing, setSubscribing] = useState(false);
 
-  // Fetch channel data on mount
+  const [channelData, setChannelData] = useState(null);
+  const [userVideos, setUserVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [subscribing, setSubscribing] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
-    const fetchChannel = async () => {
+    const fetchChannelData = async () => {
       try {
-        const res = await getUserChannelProfile(_id);
-        setChannelData(res.data.data[0]); // backend returns array
+        setLoading(true);
+
+        const channelRes = await getUserChannelProfile(_id);
+        setChannelData(channelRes.data.data[0]);
+
+        const videoRes = await getUserVideos(_id);
+        console.log(videoRes.data)
+        setUserVideos(videoRes.data.data);
       } catch (err) {
         setError(err.response?.data?.message || "Something went wrong");
       } finally {
@@ -27,11 +35,10 @@ const Account = () => {
       }
     };
 
-    fetchChannel();
+    fetchChannelData();
   }, [_id]);
 
-  // Handle subscribe/unsubscribe
-  const subscribeHandler = async () => {
+  const handleSubscription = async () => {
     if (!channelData) return;
 
     try {
@@ -67,7 +74,7 @@ const Account = () => {
     <section className="w-full h-full flex flex-col">
       {/* Channel Header */}
       <div className="w-full shadow rounded-2xl border px-4 bg-white">
-        <div className="w-full drop-shadow-2xl p-2">
+        <div className="p-2 drop-shadow-2xl">
           {/* Cover Image */}
           <div className="w-full h-40">
             <img
@@ -77,8 +84,8 @@ const Account = () => {
             />
           </div>
 
-          {/* Avatar + Info */}
-          <div className="h-40 px-5 flex items-start gap-6">
+          {/* Avatar & Info */}
+          <div className="h-30 px-5 flex items-start gap-6">
             <img
               src={channelData.avatar}
               alt="Avatar"
@@ -91,9 +98,9 @@ const Account = () => {
                 Subscribers: {channelData.subscribersCount}
               </h3>
               <button
-                onClick={subscribeHandler}
+                onClick={handleSubscription}
                 disabled={subscribing}
-                className={`mt-2 px-4 py-1 rounded-full border text-white transition hover:cursor-pointer ${
+                className={`mt-2 px-4 py-1 rounded-full text-white transition hover:cursor-pointer ${
                   channelData.isSubscribedTo
                     ? "bg-purple-600 hover:bg-purple-700"
                     : "bg-gray-800 hover:bg-gray-900"
@@ -110,14 +117,14 @@ const Account = () => {
         </div>
       </div>
 
-      {/* Videos Section (Optional) */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-4 items-center">
-        {channelData.videos?.length > 0 ? (
-          channelData.videos.map((video) => (
-            <VerticalCard key={video._id} video={video} />
+      {/* Videos Section */}
+      <div className="flex-1  overflow-y-auto px-6 py-6 flex flex-wrap gap-4 items-center">
+        {userVideos?.length > 0 ? (
+          userVideos.map((video) => (
+            <VerticalCard key={video._id}  thumbnail = {video.thumbnail}  title = {video.title}  owner = {video.owner} views={video.views} createdAt = {video.createdAt} id = {video._id}  />
           ))
         ) : (
-          <p className="text-gray-400 italic">No videos uploaded yet.</p>
+          <p className="text-gray-400 italic text-center w-full">No videos uploaded yet.</p>
         )}
       </div>
     </section>
