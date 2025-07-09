@@ -86,35 +86,125 @@
 
 // export default MainLayout
 
-import { Outlet } from "react-router-dom";
+// import { Outlet } from "react-router-dom";
+// import { LogOut, UserCircle } from "lucide-react";
+// import { NavBar, SideNavBtn } from "../Components/index.js";
+// import { navItems } from "../Utils/MainUtils";
+// import useNavStore from "../Store/Nav.Store";
+// import useUserStore from "../Store/user.Store";
+
+// const MainLayout = () => {
+//   const aside = useNavStore((state) => state.aside);
+//   const user = useUserStore((state) => state.user);
+//   const logoutUser = useUserStore((state) => state.logout);
+
+//   return (
+//     <div className="h-screen w-screen overflow-hidden relative">
+//       {/* Fixed Top Navbar */}
+//       <header className="fixed top-0 left-0 w-full h-14 bg-white shadow z-40">
+//         <NavBar />
+//       </header>
+
+//       {/* Sidebar Overlay */}
+//       {aside && (
+//         <aside className="fixed top-14 left-0 z-50 w-64 h-[calc(100vh-3.5rem)] bg-white shadow-lg border-r overflow-y-auto rounded-r-2xl p-2 flex flex-col gap-2">
+//           {navItems.map((navItem) => (
+//             <SideNavBtn
+//               key={navItem.name}
+//               path={navItem.path}
+//               icon={navItem.icon}
+//               name={navItem.name}
+//               isSmall={false}
+//             />
+//           ))}
+
+//           <SideNavBtn
+//             path={`/account/${user?._id}`}
+//             icon={<UserCircle />}
+//             name={"Account"}
+//             isSmall={false}
+//           />
+
+//           <span className="w-full " onClick={logoutUser}>
+//              <SideNavBtn path="/logout" onClick={logoutUser} icon={<LogOut />} name={"Logout"} isSmall={!aside} custom={"bottom-0 fixed   relative "} />
+//           </span>
+
+//         </aside>
+//       )}
+
+//       {/* Main Content Scrollable */}
+//       <main className=" pt-14  h-[calc(100vh-3.5rem)] z-10 relative ">
+//         <Outlet />
+//       </main>
+//     </div>
+//   );
+// };
+
+// export default MainLayout;
+
+import { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LogOut, UserCircle } from "lucide-react";
 import { NavBar, SideNavBtn } from "../Components/index.js";
-import { navItems } from "../Utils/MainUtils";
-import useNavStore from "../Store/Nav.Store";
-import useUserStore from "../Store/user.Store";
+import { navItems } from "../Utils/MainUtils.jsx";
+import useNavStore from "../Store/Nav.Store.js";
+import useUserStore from "../Store/user.Store.js";
+import axios from "axios";
 
 const MainLayout = () => {
+  const navigate = useNavigate();
   const aside = useNavStore((state) => state.aside);
+  const setAside = useNavStore((state) => state.setAside); // Add this in your store
+  const logout = useUserStore((state) => state.logout);
   const user = useUserStore((state) => state.user);
-  const logoutUser = useUserStore((state) => state.logout);
+  const path = import.meta.env.VITE_SERVER;
+
+  const logoutUser = async () => {
+    try {
+      logout();
+      const response = await axios.post(
+        `${path}users/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative">
+    <div className="h-screen w-screen overflow-hidden">
       {/* Fixed Top Navbar */}
-      <header className="fixed top-0 left-0 w-full h-14 bg-white shadow z-40">
+      <header className="fixed top-0 left-0 w-full h-14 bg-white shadow z-50">
         <NavBar />
       </header>
 
-      {/* Sidebar Overlay */}
+      {/* Backdrop for Sidebar on small screens */}
       {aside && (
-        <aside className="fixed top-14 left-0 z-50 w-64 h-[calc(100vh-3.5rem)] bg-white shadow-lg border-r overflow-y-auto rounded-r-2xl p-2 flex flex-col gap-2">
+        <div
+          className="fixed inset-0 top-14 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+          onClick={() => setAside(false)}
+        />
+      )}
+
+      <div className="flex ">
+        {/* Sidebar */}
+        <aside
+          className={`z-50 bg-white overflow-y-auto border-r rounded-r-2xl pt-3 flex-col gap-2 transition-all duration-300
+          ${aside ? "flex w-64" : "hidden md:flex md:w-14"}
+          fixed md:relative top-14 h-[calc(100vh-3.5rem)]`}
+        >
           {navItems.map((navItem) => (
             <SideNavBtn
               key={navItem.name}
               path={navItem.path}
               icon={navItem.icon}
               name={navItem.name}
-              isSmall={false}
+              isSmall={!aside}
             />
           ))}
 
@@ -122,23 +212,27 @@ const MainLayout = () => {
             path={`/account/${user?._id}`}
             icon={<UserCircle />}
             name={"Account"}
-            isSmall={false}
+            isSmall={!aside}
           />
-
-          <span className="w-full " onClick={logoutUser}>
-             <SideNavBtn path="/logout" onClick={logoutUser} icon={<LogOut />} name={"Logout"} isSmall={!aside} custom={"bottom-0 fixed   relative "} />
+          <span className="w-full" onClick={logoutUser}>
+            <SideNavBtn
+              path="/logout"
+              icon={<LogOut />}
+              name={"Logout"}
+              onClick={logoutUser}
+              isSmall={!aside}
+              custom={"relative"}
+            />
           </span>
-
         </aside>
-      )}
 
-      {/* Main Content Scrollable */}
-      <main className="pt-14  h-[calc(100vh-3.5rem)] z-10 relative ">
-        <Outlet />
-      </main>
+        {/* Main Content */}
+        <main className="flex-1 overflow-auto min-h-[calc(100vh-3.5rem)] bg-gray-100 pt-14 relative p-2">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };
 
 export default MainLayout;
-

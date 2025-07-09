@@ -35,7 +35,7 @@ const Trending = () => {
       </div>
 
       {/* Scrollable Video List */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 flex flex-col items-center gap-4">
+      <div className=" overflow-y-auto h-[85vh] px-4 py-6 flex flex-col items-center gap-4">
         {videos.length === 0 ? (
           <h1>No Video found</h1>
         ) : (
